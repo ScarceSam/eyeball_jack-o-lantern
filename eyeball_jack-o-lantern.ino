@@ -1,4 +1,4 @@
-/*
+/*************************************************************************************************
  * NunchuckPrint
  *
  * 2007 Tod E. Kurt, http://todbot.com/blog/
@@ -10,29 +10,42 @@
  *                      Added code for servos
  *                      https://www.hackster.io/mtashiro/control-servos-using-wii-nunchuk-9136bd
  *
- *      Sam Pearce -    
+ *      Sam Pearce -    added more servos for second eyeball and eyelids
  *
  *
- */
+ **************************************************************************************************/
  
 #include <Wire.h>
 #include <Servo.h>
 
-Servo servoLeft;          // Define left servo
-Servo servoRight;         // Define right servo
+Servo g_servo_left_x;
+const int left_x_pin = ;
+Servo g_servo_left_y;
+const int left_y_pin = ;
+Servo g_servo_left_lid;
+const int left_lid_pin = ;
+Servo g_servo_right_x;
+const int right_x_pin = ;
+Servo g_servo_right_y;
+const int right_y_pin = ;
+Servo g_servo_right_lid;
+const int right_lid_pin = ;
 
 static uint8_t nunchuck_buf[6];   // array to store nunchuck data,
 
 void setup()
 {
-  Serial.begin(19200);
+    Serial.begin(19200);
+    g_servo_left_x.attach(left_x_pin);
+    g_servo_left_y.attach(left_y_pin);
+    g_servo_left_lid.attach(left_lid_pin);
+    g_servo_right_x.attach(right_x_pin);
+    g_servo_right_y.attach(right_y_pin);
+    g_servo_right_lid.attach(right_lid_pin);
   
-  servoLeft.attach(10);  // Set left servo to digital pin 10
-  servoRight.attach(9);  // Set right servo to digital pin 9
-  
-  nunchuck_setpowerpins(); // use analog pins 2&3 as fake gnd & pwr
-  nunchuck_init(); // send the initilization handshake
-  Serial.print ("Finished setup\n");
+    nunchuck_setpowerpins(); // use analog pins 2&3 as fake gnd & pwr
+    nunchuck_init(); // send the initilization handshake
+    Serial.print ("Finished setup\n");
 }
 
 void loop()
@@ -44,8 +57,8 @@ void loop()
   int y_axis = map(nunchuck_buf[1], 32, 231, 0, 180);
 
 //move servo to desired position based on Wii nunchuk reading
-  servoLeft.write(x_axis);
-  servoRight.write(y_axis);
+  g_servo_left_x.write(x_axis);
+  g_servo_right_y.write(y_axis);
     
 // un-comment next line to print data to serial monitor  
 //  nunchuck_print_data();          
