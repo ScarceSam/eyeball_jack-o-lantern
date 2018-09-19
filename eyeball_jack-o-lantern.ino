@@ -19,23 +19,29 @@
 #include <Servo.h>
 
 Servo g_servo_left_x;
-const int left_x_pin = ;
+const int left_x_pin = 0;
 Servo g_servo_left_y;
-const int left_y_pin = ;
+const int left_y_pin = 1;
 Servo g_servo_left_lid;
-const int left_lid_pin = ;
+const int left_lid_pin = 2;
 Servo g_servo_right_x;
-const int right_x_pin = ;
+const int right_x_pin = 3;
 Servo g_servo_right_y;
-const int right_y_pin = ;
+const int right_y_pin = 4;
 Servo g_servo_right_lid;
-const int right_lid_pin = ;
+const int right_lid_pin = 5;
+
+const int g_joy_min_x = 23;
+const int g_joy_max_x = 222;
+const int g_joy_min_y = 32;
+const int g_joy_max_y = 231;
 
 static uint8_t nunchuck_buf[6];   // array to store nunchuck data,
 
 void setup()
 {
     Serial.begin(19200);
+    
     //move servos to neutral position befor attaching
     g_servo_left_x.write(90);
     g_servo_left_y.write(90);
@@ -43,7 +49,8 @@ void setup()
     g_servo_right_y.write(90);
     g_servo_left_lid.write(90);
     g_servo_right_lid.write(90);
-    
+
+    //attach all servos
     g_servo_left_x.attach(left_x_pin);
     g_servo_left_y.attach(left_y_pin);
     g_servo_left_lid.attach(left_lid_pin);
@@ -61,8 +68,8 @@ void loop()
   nunchuck_get_data();
 
 // map nunchuk data to a servo data point
-  int x_axis = map(nunchuck_buf[0], 23, 222, 180, 0);
-  int y_axis = map(nunchuck_buf[1], 32, 231, 0, 180);
+  int x_axis = map(nunchuck_buf[0], g_joy_min_x, g_joy_max_x, 180, 0);
+  int y_axis = map(nunchuck_buf[1], g_joy_min_y, g_joy_max_y, 0, 180);
 
 //move eyeballs & lids to desired position based on Wii nunchuk reading
   g_servo_left_x.write(x_axis);
