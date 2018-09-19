@@ -36,6 +36,14 @@ static uint8_t nunchuck_buf[6];   // array to store nunchuck data,
 void setup()
 {
     Serial.begin(19200);
+    //move servos to neutral position befor attaching
+    g_servo_left_x.write(90);
+    g_servo_left_y.write(90);
+    g_servo_right_x.write(90);
+    g_servo_right_y.write(90);
+    g_servo_left_lid.write(90);
+    g_servo_right_lid.write(90);
+    
     g_servo_left_x.attach(left_x_pin);
     g_servo_left_y.attach(left_y_pin);
     g_servo_left_lid.attach(left_lid_pin);
@@ -56,9 +64,13 @@ void loop()
   int x_axis = map(nunchuck_buf[0], 23, 222, 180, 0);
   int y_axis = map(nunchuck_buf[1], 32, 231, 0, 180);
 
-//move servo to desired position based on Wii nunchuk reading
+//move eyeballs & lids to desired position based on Wii nunchuk reading
   g_servo_left_x.write(x_axis);
-  g_servo_right_y.write(y_axis);
+  g_servo_left_y.write(y_axis);
+  g_servo_right_x.write(x_axis);
+  g_servo_right_y.write(x_axis);
+  g_servo_left_lid.write();
+  g_servo_right_lid.write();
     
 // un-comment next line to print data to serial monitor  
 //  nunchuck_print_data();          
