@@ -18,18 +18,33 @@
 #include <Wire.h>
 #include <Servo.h>
 
+//create servos and servo pins
 Servo g_servo_left_x;
-const int left_x_pin = 0;
+const int g_left_x_pin = 0;
 Servo g_servo_left_y;
-const int left_y_pin = 1;
+const int g_left_y_pin = 1;
 Servo g_servo_left_lid;
-const int left_lid_pin = 2;
+const int g_left_lid_pin = 2;
 Servo g_servo_right_x;
-const int right_x_pin = 3;
+const int g_right_x_pin = 3;
 Servo g_servo_right_y;
-const int right_y_pin = 4;
+const int g_right_y_pin = 4;
 Servo g_servo_right_lid;
-const int right_lid_pin = 5;
+const int g_right_lid_pin = 5;
+
+//set servo min and max movement
+const int g_servo_left_x_min = ;
+const int g_servo_left_x_max = ;
+const int g_servo_left_y_min = ;
+const int g_servo_left_y_max = ;
+const int g_servo_left_lid_min = ;
+const int g_servo_left_lid_max = ;
+const int g_servo_right_x_min = ;
+const int g_servo_right_x_max = ;
+const int g_servo_right_y_min = ;
+const int g_servo_right_y_max = ;
+const int g_servo_right_lid_min = ;
+const int g_servo_right_lid_max = ;
 
 const int g_joy_min_x = 23;
 const int g_joy_max_x = 222;
@@ -51,12 +66,12 @@ void setup()
     g_servo_right_lid.write(90);
 
     //attach all servos
-    g_servo_left_x.attach(left_x_pin);
-    g_servo_left_y.attach(left_y_pin);
-    g_servo_left_lid.attach(left_lid_pin);
-    g_servo_right_x.attach(right_x_pin);
-    g_servo_right_y.attach(right_y_pin);
-    g_servo_right_lid.attach(right_lid_pin);
+    g_servo_left_x.attach(g_left_x_pin);
+    g_servo_left_y.attach(g_left_y_pin);
+    g_servo_left_lid.attach(g_left_lid_pin);
+    g_servo_right_x.attach(g_right_x_pin);
+    g_servo_right_y.attach(g_right_y_pin);
+    g_servo_right_lid.attach(g_right_lid_pin);
   
     nunchuck_setpowerpins(); // use analog pins 2&3 as fake gnd & pwr
     nunchuck_init(); // send the initilization handshake
@@ -65,22 +80,26 @@ void setup()
 
 void loop()
 {
-  nunchuck_get_data();
+    nunchuck_get_data();
 
-// map nunchuk data to a servo data point
-  int x_axis = map(nunchuck_buf[0], g_joy_min_x, g_joy_max_x, 180, 0);
-  int y_axis = map(nunchuck_buf[1], g_joy_min_y, g_joy_max_y, 0, 180);
+    //constrain readings
+    int x_constraned = constrain(nunchuck_buf[0], g_joy_min_x, g_joy_max_x);
+    int y_constraned = constrain(nunchuck_buf[1], g_joy_min_y, g_joy_max_y);
 
-//move eyeballs & lids to desired position based on Wii nunchuk reading
-  g_servo_left_x.write(x_axis);
-  g_servo_left_y.write(y_axis);
-  g_servo_right_x.write(x_axis);
-  g_servo_right_y.write(x_axis);
-  g_servo_left_lid.write();
-  g_servo_right_lid.write();
+    // map nunchuk data to a servo data point
+    int x_axis = map(x_constrained, g_joy_min_x, g_joy_max_x, 180, 0);
+    int y_axis = map(y_constrained, g_joy_min_y, g_joy_max_y, 0, 180);
+
+    //move eyeballs & lids to desired position based on Wii nunchuk reading 
+    g_servo_left_x.write(x_axis);
+    g_servo_left_y.write(y_axis);
+    g_servo_right_x.write(x_axis);
+    g_servo_right_y.write(y_axis);
+    g_servo_left_lid.write();
+    g_servo_right_lid.write();
     
-// un-comment next line to print data to serial monitor  
-//  nunchuck_print_data();          
+    // un-comment next line to print data to serial monitor  
+    //  nunchuck_print_data();          
 
 }
 
