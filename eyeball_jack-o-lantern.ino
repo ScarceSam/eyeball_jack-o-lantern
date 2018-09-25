@@ -256,13 +256,21 @@ void calibrationReadings()
     static int pot_position = -1;
     static int current_servo = 0;
     static int servo[6];
-    while((g_calibration_button == 0) && (pot_position == -1)){
-        pot_position = 0;
-    }
+
+    //hold any operation unill button is released
+    while((g_calibration_button == 0) && (pot_position == -1)){}
+    
+    //print nunchuck readings
     nunchuck_print_data();
-    current_servo = (current_servo + was_button_pushed(&g_calibration_button)) % 6;
+
+    
+    current_servo = (current_servo + was_button_pushed(g_calibration_button)) % 6;
+    
     pot_position = analogRead(g_calibration_pot);
-    int servo_position = map(pot_position, 0, 1023, 10, 170);
+
+    // map the hypothetical pot positions to hypothetical servo positions
+    int servo_position = map(pot_position, 0, 1023, 0, 180);
+
     
     switch(current_servo)
     {
@@ -302,7 +310,7 @@ void calibrationReadings()
     Serial.print(servo[5]+1);
 }
 
-bool was_button_pushed(int *buttonPin)
+bool was_button_pushed(int buttonPin)
 {
     static int buttonState;             
     static int lastButtonState = LOW;   
