@@ -258,96 +258,97 @@ void calibrationReadings()
     static int servo[6];
 
     //hold any operation unill button is released
-    while((g_calibration_button == 0) && (pot_position == -1)){}
+    while((g_calibration_button == 0) && (pot_position == -1))
+    {
+    }
     
     //print nunchuck readings
     nunchuck_print_data();
 
-    
     current_servo = (current_servo + was_button_pushed(g_calibration_button)) % 6;
-    
+
     pot_position = analogRead(g_calibration_pot);
 
     // map the hypothetical pot positions to hypothetical servo positions
     int servo_position = map(pot_position, 0, 1023, 0, 180);
 
-    
-    switch(current_servo)
+
+    switch( current_servo )
     {
         case 0:
-            g_servo_left_x.write(servo[0] = servo_position);
+            g_servo_left_x.write( servo[0] = servo_position );
             break;
         case 1:
-            g_servo_left_y.write(servo[1] = servo_position);
+            g_servo_left_y.write( servo[1] = servo_position );
             break;
         case 2:
-            g_servo_left_lid.write(servo[2] = servo_position);
+            g_servo_left_lid.write( servo[2] = servo_position );
             break;
         case 3:
-            g_servo_right_y.write(servo[3] = servo_position);
+            g_servo_right_y.write( servo[3] = servo_position );
             break;
         case 4:
-            g_servo_right_x.write(servo[4] = servo_position);            
+            g_servo_right_x.write( servo[4] = servo_position );            
             break;
         case 5:
-            g_servo_right_lid.write(servo[5] = servo_position);
+            g_servo_right_lid.write( servo[5] = servo_position );
             break;
-    
     }
-    Serial.print("Selected: ");
-    Serial.print(current_servo + 1);
-    Serial.print(" 1: ");
-    Serial.print(servo[0]+1);
-    Serial.print(" 2: ");
-    Serial.print(servo[1]+1);
-    Serial.print(" 3: ");
-    Serial.print(servo[2]+1);
-    Serial.print(" 4: ");
-    Serial.print(servo[3]+1);
-    Serial.print(" 5: ");
-    Serial.print(servo[4]+1);
-    Serial.print(" 6: ");
-    Serial.print(servo[5]+1);
+    
+    Serial.print( "Selected: " );
+    Serial.print( current_servo++ );
+    Serial.print( " 1: ");
+    Serial.print( servo[0]++ );
+    Serial.print( " 2: " );
+    Serial.print( servo[1]++ );
+    Serial.print( " 3: " );
+    Serial.print( servo[2]++ );
+    Serial.print( " 4: " );
+    Serial.print( servo[3]++ );
+    Serial.print( " 5: " );
+    Serial.print( servo[4]++ );
+    Serial.print( " 6: " );
+    Serial.print( servo[5]++ );
 }
 
 bool was_button_pushed(int buttonPin)
 {
-    static int buttonState;             
-    static int lastButtonState = LOW;   
-    static unsigned long lastDebounceTime = 0;
+    static int buttonState[20];             
+    static int lastButtonState[20];   
+    static unsigned long lastDebounceTime[20];
     static unsigned long debounceDelay = 50;
     // read the state of the switch into a local variable:
-    int reading = digitalRead(*buttonPin);
-    bool total = 0;
+    int reading = digitalRead( buttonPin );
+    bool was_button_pushed = false;
     // check to see if you just pressed the button
     // (i.e. the input went from LOW to HIGH), and you've waited long enough
     // since the last press to ignore any noise:
 
     // If the switch changed, due to noise or pressing:
-    if (reading != lastButtonState)
+    if (reading != lastButtonState[buttonPin])
     {
         // reset the debouncing timer
-        lastDebounceTime = millis();
+        lastDebounceTime[buttonPin] = millis();
     }
 
-    if ((millis() - lastDebounceTime) > debounceDelay)
+    if ((millis() - lastDebounceTime[buttonPin]) > debounceDelay)
     {
         // whatever the reading is at, it's been there for longer than the debounce
         // delay, so take it as the actual current state:
 
         // if the button state has changed:
-        if (reading != buttonState) 
+        if (reading != buttonState[buttonPin]) 
         {
-            buttonState = reading;
+            buttonState[buttonPin] = reading;
 
             // only toggle the change if the new button state is HIGH
-            if (buttonState == HIGH)
+            if (buttonState[buttonPin] == HIGH)
             {
-                total = 1;
+                was_button_pushed = true;
             }
         }
     }
     // save the reading. Next time through the loop, it'll be the lastButtonState:
-    lastButtonState = reading;
-    return total;
+    lastButtonState[buttonPin] = reading;
+    return was_button_pushed;
 }
